@@ -1,0 +1,81 @@
+.procurement-landing {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+header h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #007bff;
+}
+
+.action-cards {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+}
+
+.card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  text-align: center;
+  width: 30%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.supplier-table {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.supplier-table h2 {
+  margin-bottom: 20px;
+  color: #343a40;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+button {
+  margin-right: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

@@ -1,0 +1,103 @@
+/* CSS for HRModule Component: HRModule.css */
+
+/* General Styling for HR Module */
+.hr-module {
+  padding: 40px;
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f9;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Header Styling */
+.hr-module h2 {
+  text-align: center;
+  color: #003366;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+/* Filter Inputs Styling */
+.filters {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.filters input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 30%;
+}
+
+/* Employee List Table Styling */
+.employee-list table {
+  width: 90%; /* Make the table span most of the page width */
+  margin: 0 auto; /* Center the table horizontally */
+
+}
+
+.employee-list button {
+  margin: 0 5px; /* Add spacing between buttons */
+}
+
+.employee-list th,
+.employee-list td {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.employee-list th {
+  background-color: #003366;
+  color: white;
+  text-align: center;
+}
+
+.employee-list button {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.employee-list button:hover {
+  background-color: #0056b3;
+}
+
+/* Employee Details Styling */
+.employee-details {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+
+.employee-details h3 {
+  color: #003366;
+  margin-bottom: 20px;
+}
+
+.employee-details p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.employee-details button {
+  background-color: #ff0000;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.employee-details button:hover {
+  background-color: #cc0000;
+}

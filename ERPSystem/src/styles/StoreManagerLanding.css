@@ -1,0 +1,38 @@
+.store-manager-landing {
+  text-align: center;
+  padding: 20px;
+}
+
+.logout-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.logout-button:hover {
+  background-color: #0056b3;
+}
+
+.landing-buttons button {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.landing-buttons button:hover {
+  background-color: #007bff;
+  color: white;
+}

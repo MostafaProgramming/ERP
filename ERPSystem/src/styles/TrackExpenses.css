@@ -1,0 +1,60 @@
+.track-expenses {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  header h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #007bff;
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .filters input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 18%;
+  }
+  
+  .filters input[type="date"] {
+    padding: 8px;
+  }
+  
+  .expenses-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .expenses-table th,
+  .expenses-table td {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .expenses-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .expenses-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .expenses-table td {
+    color: #333;
+  }
+  
+  

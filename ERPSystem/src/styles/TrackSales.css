@@ -1,0 +1,84 @@
+/* General Styling for Sales Module */
+.sales-module {
+  padding: 40px;
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f9; /* Soft white for a clean Rolls-Royce theme */
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Header Styling */
+.sales-module h2 {
+  text-align: center;
+  color: #003366; /* Rolls-Royce blue */
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+/* Chart Styling */
+.sales-chart {
+  margin: 40px auto;
+  width: 80%;
+  max-width: 1000px;
+}
+
+/* Sales Data Table Styling */
+.sales-data-table {
+  margin-top: 40px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #003366; /* Rolls-Royce blue for headers */
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+td {
+  background-color: #ffffff;
+}
+
+/* Table Rows Styling */
+tr:hover {
+  background-color: #e6f0ff; /* Light blue on row hover for a professional feel */
+}
+
+/* Loading Message Styling */
+.sales-module p {
+  text-align: center;
+  font-size: 1.25rem;
+  color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sales-module {
+    padding: 20px;
+  }
+
+  .sales-chart {
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 10px;
+  }
+}

@@ -1,0 +1,75 @@
+/* General Page Styling */
+.view-suppliers {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  /* Supplier Table Styling */
+  .supplier-table {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .supplier-table h2 {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 20px;
+  }
+  
+  .supplier-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .supplier-table th,
+  .supplier-table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .supplier-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .supplier-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Button Styling */
+  button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  button + button {
+    margin-left: 10px;
+  }
+  
+  /* Responsive Styling */
+  @media (max-width: 768px) {
+    .supplier-table table {
+      font-size: 14px;
+    }
+  
+    button {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+  }
+  

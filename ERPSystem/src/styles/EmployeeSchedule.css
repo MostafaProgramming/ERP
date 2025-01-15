@@ -1,0 +1,76 @@
+.employee-schedule-container {
+  display: flex;
+  height: 100vh;
+}
+
+.employee-list {
+  width: 20%;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.employee-list h2 {
+  margin-bottom: 20px;
+}
+
+.employee-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.employee-item p {
+  margin: 0;
+}
+
+.schedule-calendar {
+  flex: 1;
+  padding: 20px;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calendar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.employee-name {
+  width: 150px;
+  font-weight: bold;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(30, 30px);
+  gap: 5px;
+}
+
+.calendar-cell {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.calendar-cell.working {
+  background-color: green;
+  color: #fff;
+}
+
+.calendar-cell.absent {
+  background-color: red;
+  color: #fff;
+}

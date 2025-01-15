@@ -1,0 +1,48 @@
+.payroll-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.payroll-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-button,
+.export-button {
+  padding: 10px 20px;
+  border: none;
+  color: white;
+  background-color: #0078d4;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.approve-button:hover,
+.export-button:hover {
+  background-color: #005bb5;
+}
+
+.payroll-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.payroll-table th,
+.payroll-table td {
+  border: 1px solid #ddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.payroll-table th {
+  background-color: #f4f4f4;
+}

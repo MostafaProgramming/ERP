@@ -1,0 +1,43 @@
+.calendar-cell {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.calendar-cell.present {
+  background-color: green;
+  color: white;
+}
+
+.calendar-cell.absent {
+  background-color: red;
+  color: white;
+}
+
+.calendar-cell.late {
+  background-color: orange;
+  color: white;
+}
+
+.calendar-cell.on-leave {
+  background-color: blue;
+  color: white;
+}
+
+.status-dropdown {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.status-dropdown button {
+  padding: 5px 10px;
+  cursor: pointer;
+}

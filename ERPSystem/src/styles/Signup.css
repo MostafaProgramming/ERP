@@ -1,0 +1,54 @@
+/* src/Signup.css */
+.signup-container {
+  background-color: #ffffff;
+  color: #003366;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 2px solid #003366;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #003366;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input,
+select {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #003366;
+  border-radius: 5px;
+}
+
+.rr-logo {
+  position: center absolute;
+  top: 20px;
+  right: 20px;
+  width: 150px;
+}
+
+button {
+  background-color: #003366;
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #00509e;
+}
+
+.back-button {
+  margin-top: 10px;
+  background-color: #00509e;
+}
