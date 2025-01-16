@@ -385,6 +385,31 @@ app.get('/sales-record', async (req, res) => {
     handleDatabaseError(res, err, 'Error fetching sales records');
   }
 });
+
+// PERSON
+app.get('/sales-by-store', async (req, res) => {
+  try {
+    const { location_id, department_id } = req.query;
+
+    let query = 'SELECT * FROM sales_record';
+    let queryParams = [];
+
+    if (location_id) {
+      query += ' WHERE store_id = $1';
+      queryParams.push(location_id);
+    } else if (department_id) {
+      query += ' WHERE department_id = $1';
+      queryParams.push(department_id);
+    }
+
+    const result = await pool.query(query, queryParams);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching person data:", error.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.get("/sales-trends", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -401,6 +426,8 @@ app.get("/sales-trends", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+
 app.get("/sales-trends-by-product", async (req, res) => {
   try {
     const result = await pool.query(`
