@@ -24,21 +24,39 @@ Chart.register(
   Legend
 );
 
-export const TrackSales = () => {
+export const TrackSales = ({ departmentId }) => {
   // State to store sales data
   const [salesData, setSalesData] = useState([]);
   // State to manage loading indicator
   const [loading, setLoading] = useState(true);
+  // State to store available locations for filtering
+  const [locations, setLocations] = useState([]);
+  // State to track selected location for filtering
+  const [selectedLocation, setSelectedLocation] = useState("");
 
-  // useEffect hook to fetch sales data when the component mounts
+  // Fetch initial data when component mounts
   useEffect(() => {
     fetchSalesData();
+    fetchLocations();
   }, []);
 
   // Function to fetch sales data from backend API
-  const fetchSalesData = async () => {
+  const fetchSalesData = async (locationId = null) => {
     try {
-      const response = await axios.get("http://localhost:5000/sales-record");
+      const departmentId = localStorage.getItem("department_id");
+      const locationId = localStorage.getItem("location_id");
+      let response;
+  
+      if (departmentId === "1") {
+        // Sales Manager: Fetch all Sales
+        response = await axios.get("http://localhost:5000/sales-record");
+      } else if (departmentId !== "1") {
+        // Store/Warehouse Manager: Fetch employees by location_id
+        response = await axios.get("http://localhost:5000/sales-by-store", {
+          params: { location_id: locationId },
+        });
+      } 
+      setLoading(true);
       setSalesData(response.data);
       setLoading(false);
     } catch (error) {
@@ -47,16 +65,35 @@ export const TrackSales = () => {
     }
   };
 
+  // Function to fetch locations for the filter
+  const fetchLocations = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/locations");
+      setLocations(response.data);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+    }
+  };
+
+  // Handle change in location filter
+  const handleLocationChange = (e) => {
+    const locationId = e.target.value;
+    setSelectedLocation(locationId);
+    fetchSalesData(locationId);
+  };
+
   // Chart data configuration for rendering the line chart
   const chartData = {
-    labels: salesData.map((sale) => new Date(sale.date_of_sale).toLocaleDateString()), // Labels for the x-axis (dates)
+    labels: salesData.map((sale) =>
+      new Date(sale.date_of_sale).toLocaleDateString()
+    ),
     datasets: [
       {
-        label: "Total Amount Sold", // Label for the dataset
-        data: salesData.map((sale) => sale.total_amount), // Data points for the y-axis (total amount sold)
-        borderColor: "#007bff", // Line color
-        backgroundColor: "rgba(0, 123, 255, 0.5)", // Fill color under the line
-        fill: true, // Fill area under the line
+        label: "Total Amount Sold",
+        data: salesData.map((sale) => sale.total_amount),
+        borderColor: "#007bff",
+        backgroundColor: "rgba(0, 123, 255, 0.5)",
+        fill: true,
       },
     ],
   };
@@ -67,7 +104,7 @@ export const TrackSales = () => {
     maintainAspectRatio: false,
     scales: {
       x: {
-        type: "category", // Ensure the x-axis uses 'category' scale
+        type: "category",
         title: {
           display: true,
           text: "Date",
@@ -88,16 +125,30 @@ export const TrackSales = () => {
   return (
     <div className="sales-module">
       <h2>Track Sales Data</h2>
+      {departmentId !== 1 && (
+        <div className="filter-container">
+          <label htmlFor="location-filter">Filter by Location:</label>
+          <select
+            id="location-filter"
+            value={selectedLocation}
+            onChange={handleLocationChange}
+          >
+            <option value="">All Locations</option>
+            {locations.map((location) => (
+              <option key={location.location_id} value={location.location_id}>
+                {location.location_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       {loading ? (
-        // Display loading message while data is being fetched
         <p>Loading sales data...</p>
       ) : (
         <>
-          {/* Render the sales chart once data is available */}
           <div className="sales-chart" style={{ height: "500px" }}>
             <Line data={chartData} options={chartOptions} />
           </div>
-          {/* Render the sales data in a table format */}
           <div className="sales-data-table">
             <table>
               <thead>

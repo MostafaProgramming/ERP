@@ -40,6 +40,7 @@ function App() {
           element={<WarehouseManagerLanding />}
         />
         <Route path="/warehouse-manager/track-inventory" element={<Inventory />} />
+        <Route path="/warehouse-manager/manage-employees" element={<ManageEmployee />} />
         <Route path="/warehouse-manager/receive-purchase-orders" element={<PurchaseOrder />} />
         <Route path="/warehouse-manager/place-purchase-orders" element={<CreatePurchaseOrder />} />
         <Route path="/sales-manager" element={<SalesStaffLanding />} />
@@ -48,16 +49,14 @@ function App() {
         <Route path="/finance-manager/track-expenses" element={<TrackExpenses />} />
         <Route path="/executive" element={<ExecutiveLanding />} />
         <Route path="/store-manager/managing-employees" element={<ManageEmployee />} />
+        <Route path="/store-manager/track-sales" element={<TrackSales />} />
         <Route path="/schedule/:employeeId" element={<ManageSchedule />} />
         <Route path="/store-manager/schedule" element={<EmployeeSchedule />} />
         <Route path="/store-manager/track-inventory" element={<Inventory />} />
         <Route path="/hr-team/payrolls" element={<PayrollPage />} />
         <Route path="/hr-team/managing-employees" element={<ManageEmployee />} />
         <Route path="/procurement-manager/track-inventory" element={<Inventory />} />
-        <Route
-          path="/procurement-staff/view-suppliers"
-          element={<ViewSuppliers />}
-        />
+        <Route path="/procurement-staff/view-suppliers" element={<ViewSuppliers />} />
         <Route path="/procurement-manager/track-purchase-orders" element={<PurchaseOrder />} />
         <Route path="/sales-staff/track-sales" element={<TrackSales />} />
         <Route path="/sales-staff/analyse-sales" element={<AnalyseSales />} />
