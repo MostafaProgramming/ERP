@@ -3,56 +3,59 @@ import axios from "axios";
 import { FaHome } from "react-icons/fa";
 import "../styles/PurchaseOrder.css";
 
-export const PurchaseOrder = () => {
-  const [purchaseOrders, setPurchaseOrders] = useState([]);
+export const StockTransfer = () => {
+  const [stockTransfers, setStockTransfers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const departmentId = localStorage.getItem("department_id");
   const locationId = localStorage.getItem("location_id");
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
-    fetchPurchaseOrders();
+    fetchStockTransfers();
   }, []);
 
-  const fetchPurchaseOrders = async () => {
+  const fetchStockTransfers = async () => {
     try {
       let response;
       if (departmentId == 4) {
+        // Warehouse Manager fetches all relevant stock transfers
         response = await axios.get("http://localhost:5000/orders", {
-          params: { order_type: "purchase_order" },
+          params: { order_type: "stock_transfer" },
         });
       } else if (departmentId == 5) {
-        response = await axios.get("http://localhost:5000/orders", {
-          params: { order_type: "purchase_order", location_id: locationId },
+        // Store Manager fetches stock transfers specific to their location
+        response = await axios.get("http://localhost:5000/stock-transfers", {
+          params: { order_type: "stock_transfer", location_id: locationId },
         });
       }
-      setPurchaseOrders(response.data);
+      setStockTransfers(response.data);
     } catch (error) {
-      console.error("Error fetching purchase orders:", error);
+      console.error("Error fetching stock transfers:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const updatePurchaseOrderStatus = async (orderId, status) => {
+  const updateStockTransferStatus = async (orderId, status) => {
     try {
       await axios.put(`http://localhost:5000/orders/${orderId}`, {
         status,
       });
-      setPurchaseOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.order_id === orderId
+      setStockTransfers((prevTransfers) =>
+        prevTransfers.map((transfer) =>
+          transfer.order_id === orderId
             ? {
-                ...order,
+                ...transfer,
                 status,
                 delivery_date:
                   status === "Completed" ? new Date().toISOString() : null,
               }
-            : order
+            : transfer
         )
       );
     } catch (error) {
-      console.error("Error updating purchase order status:", error);
+      console.error("Error updating stock transfer status:", error);
     }
   };
 
@@ -63,9 +66,9 @@ export const PurchaseOrder = () => {
         <FaHome size={30} onClick={() => window.history.back()} />
       </div>
 
-      <h2>Purchase Order Management</h2>
+      <h2>Stock Transfer Management</h2>
       {loading ? (
-        <p>Loading purchase orders...</p>
+        <p>Loading stock transfers...</p>
       ) : (
         <table className="purchase-order-table">
           <thead>
@@ -73,70 +76,57 @@ export const PurchaseOrder = () => {
               <th>Order ID</th>
               <th>Product</th>
               <th>Quantity</th>
-              <th>Total Amount</th>
+              <th>Destination</th>
               <th>Status</th>
               <th>Delivery Date</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {purchaseOrders.map((order) => (
-              <tr key={order.order_id}>
-                <td>{order.order_id}</td>
-                <td>{order.product_name || "N/A"}</td>
-                <td>{order.quantity || 0}</td>
+            {stockTransfers.map((transfer) => (
+              <tr key={transfer.order_id}>
+                <td>{transfer.order_id}</td>
+                <td>{transfer.product_name || "N/A"}</td>
+                <td>{transfer.quantity || 0}</td>
+                <td>{transfer.destination_location_id}</td>
+                <td>{transfer.status}</td>
                 <td>
-                  {order.total_amount
-                    ? Number(order.total_amount).toFixed(2)
-                    : "N/A"}
-                </td>
-                <td>{order.status}</td>
-                <td>
-                  {order.delivery_date
-                    ? new Date(order.delivery_date).toLocaleDateString()
+                  {transfer.delivery_date
+                    ? new Date(transfer.delivery_date).toLocaleDateString()
                     : "N/A"}
                 </td>
                 <td>
-                  {/* Procurement Manager Actions */}
-                  {departmentId == 4 && order.status === "Awaiting Approval" && (
-                    <>
+                  {/* Store Manager Actions */}
+                  {role == "Store Manager" &&
+                    transfer.status === "Pending" && (
                       <button
                         className="action-button approve"
                         onClick={() =>
-                          updatePurchaseOrderStatus(order.order_id, "Pending")
+                          updateStockTransferStatus(transfer.order_id, "Completed")
                         }
                       >
-                        ✔️ Approve
+                        ✔️ Recieved
                       </button>
-                      <button
-                        className="action-button reject"
-                        onClick={() =>
-                          updatePurchaseOrderStatus(order.order_id, "Cancelled")
-                        }
-                      >
-                        ❌ Reject
-                      </button>
-                    </>
-                  )}
+                    )}
                   {/* Warehouse Manager Actions */}
-                  {departmentId == 5 &&
-                    (order.status === "Pending" || order.status === "Late") && (
+                  {role == "Warehouse Manager" &&
+                    transfer.status === "Awaiting Approval" && (
                       <>
                         <button
                           className="action-button approve"
                           onClick={() =>
-                            updatePurchaseOrderStatus(order.order_id, "Completed")
+                            updateStockTransferStatus(transfer.order_id, "Pending")
                           }
                         >
-                          ✔️ Recieved
+                          ✔️ Approve
                         </button>
                         <button
                           className="action-button reject"
                           onClick={() =>
-                            updatePurchaseOrderStatus(order.order_id, "Late")
+                            updateStockTransferStatus(transfer.order_id, "Cancelled")
                           }
                         >
-                          ❌ 
+                          ❌ Reject
                         </button>
                       </>
                     )}
@@ -150,4 +140,4 @@ export const PurchaseOrder = () => {
   );
 };
 
-export default PurchaseOrder;
+export default StockTransfer;

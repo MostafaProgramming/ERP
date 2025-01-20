@@ -288,6 +288,23 @@ app.get('/store', async (req, res) => {
     handleDatabaseError(res, err, 'Error fetching stores');
   }
 });
+// Endpoint to fetch all warehouses
+app.get("/warehouse-locations", async (req, res) => {
+  try {
+    const { location_type } = req.query;
+
+    // Fetch locations based on the location_type
+    const result = await pool.query(
+      "SELECT location_id, location_name, location_type FROM location WHERE location_type = $1",
+      [location_type]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    res.status(500).json({ error: "Failed to fetch locations" });
+  }
+});
 
 // WAREHOUSES
 app.get('/warehouse', async (req, res) => {
@@ -475,6 +492,144 @@ app.put('/purchase-orders/:id', async (req, res) => {
   );
   res.json({ message: 'Order status updated successfully' });
 });
+
+app.get("/orders", async (req, res) => {
+  try {
+    const { order_type, location_id } = req.query;
+    let query = `
+      SELECT o.order_id, o.product_id, o.quantity, o.total_amount, o.status, 
+             o.delivery_date, p.product_name
+      FROM orders o
+      JOIN product p ON o.product_id = p.product_id
+      WHERE o.order_type = $1
+    `;
+    const params = [order_type];
+
+    if (location_id) {
+      query += ` AND o.order_id IN (
+        SELECT order_id FROM purchase_orders WHERE location_id = $2
+      )`;
+      params.push(location_id);
+    }
+
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching orders:", err);
+    res.status(500).json({ error: "Error fetching orders" });
+  }
+});
+
+app.get("/stock-transfers", async (req, res) => {
+  const { order_type, location_id } = req.query;
+
+  try {
+    let query = `
+      SELECT o.*, st.source_location_id, st.destination_location_id, p.product_name 
+      FROM orders o
+      JOIN stock_transfers st ON o.order_id = st.order_id
+      JOIN product p ON o.product_id = p.product_id
+      WHERE o.order_type = $1
+    `;
+    const params = [order_type];
+
+    if (location_id) {
+      query += ` AND (st.source_location_id = $2 OR st.destination_location_id = $2)`;
+      params.push(location_id);
+    }
+
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching stock transfers:", err);
+    res.status(500).json({ error: "Error fetching stock transfers" });
+  }
+});
+
+app.put("/orders/:orderId", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const result = await pool.query(
+      `UPDATE orders 
+       SET status = $1::VARCHAR, updated_at = NOW(), 
+           delivery_date = CASE WHEN $1 = 'Completed' THEN NOW() ELSE NULL END 
+       WHERE order_id = $2
+       RETURNING *`,
+      [status, orderId]
+    );
+    
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating order status:", err);
+    res.status(500).json({ error: "Error updating order status" });
+  }
+});
+
+app.post("/orders", async (req, res) => {
+  try {
+    const {
+      order_date,
+      product_id,
+      quantity,
+      location_id, // Destination location for stock transfers
+      order_type,
+      source_location_id, // For stock_transfer
+      supplier_id, // For purchase_order
+    } = req.body;
+
+    // Fetch product cost from the product table
+    const productResult = await pool.query(
+      "SELECT cost FROM products WHERE product_id = $1",
+      [product_id]
+    );
+
+    if (productResult.rowCount === 0) {
+      return res.status(400).json({ error: "Invalid product ID" });
+    }
+
+    const productCost = productResult.rows[0].cost;
+    const totalAmount = productCost * quantity;
+
+    // Insert into the orders table
+    const orderResult = await pool.query(
+      `INSERT INTO orders (order_date, product_id, quantity, order_type, status, total_amount, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+       RETURNING order_id`,
+      [order_date, product_id, quantity, order_type, "Awaiting Approval", totalAmount]
+    );
+
+    const orderId = orderResult.rows[0].order_id;
+
+    if (order_type === "stock_transfer") {
+      // Insert into stock_transfers table
+      await pool.query(
+        `INSERT INTO stock_transfers (order_id, source_location_id, destination_location_id)
+         VALUES ($1, $2, $3)`,
+        [orderId, source_location_id, location_id]
+      );
+    } else if (order_type === "purchase_order") {
+      // Insert into purchase_orders table
+      await pool.query(
+        `INSERT INTO purchase_orders (order_id, supplier_id, location_id)
+         VALUES ($1, $2, $3)`,
+        [orderId, supplier_id, location_id]
+      );
+    }
+
+    res.status(201).json({ message: "Order created successfully", orderId });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).json({ error: "Error creating order" });
+  }
+});
+
 
 app.post('/purchase-orders', async (req, res) => {
   const { order_date, product_id, supplier_id, quantity, location_id } = req.body;

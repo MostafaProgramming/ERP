@@ -11,10 +11,16 @@ const StoreManagerLanding = () => {
         navigate("/store-manager/track-inventory"); // Redirect to Inventory Page
         break;
       case "sales":
-        navigate("/sales"); // Redirect to Sales Analysis Page
+        navigate("/store-manager/track-sales"); // Redirect to Sales Analysis Page
         break;
       case "employees":
         navigate("/store-manager/managing-employees"); // Redirect to Employee Scheduling Page
+        break;
+      case "recieve-transfer":
+        navigate("/store-manager/recieve-stock-transfers"); // Redirect to Employee Scheduling Page
+         break;
+      case "request-transfer":
+        navigate("/store-manager/request-stock-transfers"); // Redirect to Employee Scheduling Page
         break;
       default:
         break;
@@ -44,6 +50,14 @@ const StoreManagerLanding = () => {
         <div className="card" onClick={() => handleNavigation("employees")}>
           <h3>Manage Store Employees</h3>
           <p>View Employees and Track Work Schedules</p>
+        </div>
+        <div className="card" onClick={() => handleNavigation("recieve-transfer")}>
+          <h3>Recieve Stock Transfers</h3>
+          <p>View and Record Stock Transfer Updates</p>
+        </div>
+        <div className="card" onClick={() => handleNavigation("request-transfer")}>
+          <h3>Request Stock Transfers</h3>
+          <p>Request Stock Transfers from Warehouse</p>
         </div>
       </div>
 

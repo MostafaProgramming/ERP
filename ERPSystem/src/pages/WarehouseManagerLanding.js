@@ -22,7 +22,7 @@ const WarehouseManagerLanding = () => {
           <h3>Track Stock Movement</h3>
           <p>Monitor stock movement within the warehouse.</p>
         </div>
-        <div className="card" onClick={() => navigate("/coordinate-stores")}>
+        <div className="card" onClick={() => navigate("/warehouse-manager/manage-stock-transfers")}>
           <h3>Coordinate with Stores</h3>
           <p>Coordinate stock replenishment with stores.</p>
         </div>
@@ -32,7 +32,7 @@ const WarehouseManagerLanding = () => {
         </div>
         <div
           className="card"
-          onClick={() => navigate("/store-manager/schedule")}
+          onClick={() => navigate("/warehouse-manager/manage-employees")}
         >
           <h3>Manage Employee Schedules</h3>
           <p>Assign and track employee shifts effectively.</p>

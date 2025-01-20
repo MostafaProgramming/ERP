@@ -11,7 +11,7 @@ import FinanceTeamLanding from "./pages/FinanceTeamLanding";
 import ExecutiveLanding from "./pages/ExecutiveLanding";
 import EmployeeSchedule from "./components/EmployeeSchedule";
 import PayrollPage from "./pages/PayrollPage";
-import CreatePurchaseOrder from "./pages/CreatePurchaseOrders"; 
+import CreateOrder from "./pages/CreateOrders"; 
 import ViewSuppliers from "./pages/ViewSuppliers";
 import TrackDeliverySchedules from "./pages/TrackDeliverySchedules";
 import { TrackSales } from "./components/TrackSales";
@@ -23,6 +23,7 @@ import ManageSchedule from "./components/ManageSchedule";
 import Inventory from "./pages/Inventory";
 import PurchaseOrder from "./pages/PurchaseOrder";
 import TrackExpenses from "./pages/TrackExpenses";
+import StockTransfer from "./pages/StockTransfer";
 
 function App() {
   return (
@@ -42,13 +43,16 @@ function App() {
         <Route path="/warehouse-manager/track-inventory" element={<Inventory />} />
         <Route path="/warehouse-manager/manage-employees" element={<ManageEmployee />} />
         <Route path="/warehouse-manager/receive-purchase-orders" element={<PurchaseOrder />} />
-        <Route path="/warehouse-manager/place-purchase-orders" element={<CreatePurchaseOrder />} />
+        <Route path="/warehouse-manager/manage-stock-transfers" element={<StockTransfer />} />
+        <Route path="/warehouse-manager/place-purchase-orders" element={<CreateOrder />} />
         <Route path="/sales-manager" element={<SalesStaffLanding />} />
         <Route path="/hr-manager" element={<HRTeamLanding />} />
         <Route path="/finance-manager" element={<FinanceTeamLanding />} />
         <Route path="/finance-manager/track-expenses" element={<TrackExpenses />} />
         <Route path="/executive" element={<ExecutiveLanding />} />
         <Route path="/store-manager/managing-employees" element={<ManageEmployee />} />
+        <Route path="/store-manager/request-stock-transfers" element={<CreateOrder />} />
+        <Route path="/store-manager/recieve-stock-transfers" element={<StockTransfer />} />
         <Route path="/store-manager/track-sales" element={<TrackSales />} />
         <Route path="/schedule/:employeeId" element={<ManageSchedule />} />
         <Route path="/store-manager/schedule" element={<EmployeeSchedule />} />
