@@ -54,6 +54,14 @@ const ProcurementLanding = () => {
           <h3>Manage Purchase Orders</h3>
           <p>Manage and Track Current Purchase Orders.</p>
         </div>
+        {/* Manage Product Catalogue */}
+        <div
+          className="card"
+          onClick={() => navigate("/procurement-manager/manage-products")}
+        >
+          <h3>Manage Products</h3>
+          <p>Add products or Edit Existting Products.</p>
+        </div>
       </div>
 
       {loading && <p>Loading procurement data...</p>}
