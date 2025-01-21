@@ -46,7 +46,7 @@ const FinanceLanding = () => {
         {/* Financial Reports */}
         <div
           className="card"
-          onClick={() => navigate("/finance/financial-reports")}
+          onClick={() => navigate("/finance-manager/financial-reports")}
         >
           <h3>Financial Reports</h3>
           <p>Generate and Analyze Financial Reports.</p>

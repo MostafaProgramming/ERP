@@ -35,6 +35,7 @@ import Expenses from "./components/Expenses/Expenses";
 import AddExpense from "./components/Expenses/AddExpenses";
 import AddBudget from "./components/Budget/AddBudget";
 import Budget from "./components/Budget/Budget";
+import FinancialReports from "./components/Report/Report";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
         <Route path="/add-expense" element={<AddExpense />} />
         <Route path="/finance-manager/view-budgets" element={<Budget />} />
         <Route path="/finance-manager/add-department-budget" element={<AddBudget />} />
+        <Route path="/finance-manager/financial-reports" element={<FinancialReports />} />
         <Route path="/executive" element={<ExecutiveLanding />} />
         <Route path="/store-manager/managing-employees" element={<ManageEmployee />} />
         <Route path="/store-manager/request-stock-transfers" element={<CreateOrder />} />

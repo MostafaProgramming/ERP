@@ -787,6 +787,62 @@ app.get('/financial-report', async (req, res) => {
     handleDatabaseError(res, err, 'Error fetching financial reports');
   }
 });
+app.get("/financial-reports", async (req, res) => {
+  try {
+    const { start_date, end_date } = req.query;
+
+    // Construct date filters
+    let dateFilterSales = "";
+    let dateFilterPurchaseOrders = "";
+
+    if (start_date && end_date) {
+      dateFilterSales = `WHERE date_of_sale BETWEEN '${start_date}' AND '${end_date}'`;
+      dateFilterPurchaseOrders = `AND order_date BETWEEN '${start_date}' AND '${end_date}'`;
+    }
+
+    // Total Sales
+    const salesResult = await pool.query(
+      `SELECT COALESCE(SUM(total_amount), 0) AS total_sales FROM sales_record ${dateFilterSales}`
+    );
+    const totalSales = salesResult.rows[0].total_sales;
+
+    // Total Expenses
+    const expenseResult = await pool.query(
+      `SELECT COALESCE(SUM(amount), 0) AS total_expenses FROM expenses`
+    );
+    const totalExpenses = expenseResult.rows[0].total_expenses;
+
+    // Total Salaries
+    const salaryResult = await pool.query(
+      `SELECT COALESCE(SUM(salary), 0) AS total_salaries FROM person`
+    );
+    const totalSalaries = salaryResult.rows[0].total_salaries;
+
+    // Total Purchase Orders
+    const purchaseOrderResult = await pool.query(
+      `SELECT COALESCE(SUM(total_amount), 0) AS total_purchase_orders 
+       FROM orders 
+       WHERE order_type = 'purchase_order' ${dateFilterPurchaseOrders}`
+    );
+    const totalPurchaseOrders = purchaseOrderResult.rows[0].total_purchase_orders;
+
+    // Calculate Profit
+    const profit = totalSales - (totalExpenses + totalSalaries + totalPurchaseOrders);
+
+    // Send the result as JSON
+    res.json({
+      total_sales: totalSales,
+      total_expenses: totalExpenses,
+      total_salaries: totalSalaries,
+      total_purchase_orders: totalPurchaseOrders,
+      profit: profit,
+    });
+  } catch (err) {
+    console.error("Error generating financial report:", err);
+    res.status(500).json({ error: "Failed to generate financial report." });
+  }
+});
+
 
 // ATTENDANCE
 // Fetch attendance for a specific employee
