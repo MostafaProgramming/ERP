@@ -29,6 +29,10 @@ import Suppliers from "./components/Supplier/Supplier";
 import AddProduct from "./components/Product/AddProduct";
 import AddSupplier from "./components/Supplier/AddSupplier";
 import AddSalesRecord from "./components/Sales/AddSales";
+import AddEmployee from "./components/Employee/AddEmployee";
+import AddLocation from "./components/Location/AddLocation";
+import Expenses from "./components/Expenses/Expenses";
+import AddExpense from "./components/Expenses/AddExpenses";
 
 function App() {
   return (
@@ -52,8 +56,10 @@ function App() {
         <Route path="/warehouse-manager/place-purchase-orders" element={<CreateOrder />} />
         <Route path="/sales-manager" element={<SalesStaffLanding />} />
         <Route path="/hr-manager" element={<HRTeamLanding />} />
+        <Route path="/hr-manager/add-employee" element={<AddEmployee />} />
         <Route path="/finance-manager" element={<FinanceTeamLanding />} />
-        <Route path="/finance-manager/track-expenses" element={<TrackExpenses />} />
+        <Route path="/finance-manager/track-expenses" element={<Expenses />} />
+        <Route path="/add-expense" element={<AddExpense />} />
         <Route path="/executive" element={<ExecutiveLanding />} />
         <Route path="/store-manager/managing-employees" element={<ManageEmployee />} />
         <Route path="/store-manager/request-stock-transfers" element={<CreateOrder />} />
@@ -64,6 +70,7 @@ function App() {
         <Route path="/store-manager/track-inventory" element={<Inventory />} />
         <Route path="/hr-team/payrolls" element={<PayrollPage />} />
         <Route path="/hr-team/managing-employees" element={<ManageEmployee />} />
+        <Route path="/add-location" element={<AddLocation />} />
         <Route path="/procurement-manager/track-inventory" element={<Inventory />} />
         <Route path="/procurement-staff/view-suppliers" element={<ViewSuppliers />} />
         <Route path="/procurement-manager/track-purchase-orders" element={<PurchaseOrder />} />

@@ -28,7 +28,7 @@ const FinanceLanding = () => {
         {/* Manage Expenses */}
         <div
           className="card"
-          onClick={() => navigate("/finance/manage-expenses")}
+          onClick={() => navigate("/add-expense")}
         >
           <h3>Manage Expenses</h3>
           <p>Add, Edit, or Delete Expense Records.</p>

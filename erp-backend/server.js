@@ -194,70 +194,22 @@ app.get('/employee', async (req, res) => {
   }
 });
 
-//EMPLOYEES
-/*app.get('/employee', async (req, res) => {
+app.post("/add-employee", async (req, res) => {
+  const { name, email, role, salary, department_id, location_id, hire_date } = req.body;
   try {
-    console.log("Received person_id:", req.query.person_id);
-
-    // Get the logged-in manager's location_id or department_id
-    const managerData = await pool.query(
-      `SELECT location_id, department_id 
-       FROM person 
-       WHERE person_id = $1`,
-      [req.query.person_id] // Assuming `person_id` is passed as a query parameter
+    await pool.query(
+      `INSERT INTO person (name, email, role, salary, department_id, location_id, hire_date)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [name, email, role, salary, department_id, location_id, hire_date]
     );
-
-    if (managerData.rows.length === 0) {
-      return res.status(404).json({ message: 'Manager not found' });
-    }
-
-    const { location_id, department_id } = managerData.rows[0];
-
-    let employees;
-
-    if (location_id) {
-      // Fetch employees by location_id for store/warehouse managers
-      employees = await pool.query(
-        `SELECT 
-           e.employee_id, 
-           p.name, 
-           p.email, 
-           p.role, 
-           p.salary, 
-           p.hire_date, 
-           p.location_id 
-         FROM employee e
-         JOIN person p ON e.person_id = p.person_id 
-         WHERE p.location_id = $1`,
-        [location_id]
-      );
-    } else if (department_id) {
-      // Fetch employees by department_id for other managers
-      employees = await pool.query(
-        `SELECT 
-           e.employee_id, 
-           p.name, 
-           p.email, 
-           p.role, 
-           p.salary, 
-           p.hire_date, 
-           p.department_id 
-         FROM employee e
-         JOIN person p ON e.person_id = p.person_id 
-         WHERE p.department_id = $1`,
-        [department_id]
-      );
-    } else {
-      return res.status(404).json({ message: 'No employees found for the manager' });
-    }
-
-    res.json(employees.rows);
+    res.status(201).json({ message: "Employee added successfully!" });
   } catch (error) {
-    console.error("Error fetching employees:", error.message);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error adding employee:", error);
+    res.status(500).json({ error: "Error adding employee" });
   }
 });
-*/
+
+
 
 // DEPARTMENTS
 app.get('/department', async (req, res) => {
@@ -276,6 +228,61 @@ app.get('/location', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     handleDatabaseError(res, err, 'Error fetching locations');
+  }
+});
+app.post("/location", async (req, res) => {
+  try {
+    const {
+      location_name,
+      location,
+      manager_id,
+      contact_number,
+      location_type,
+      operating_hours,
+      customer_capacity,
+      parking_spaces,
+      storage_capacity,
+      number_of_docks,
+    } = req.body;
+
+    // Insert into location table
+    const locationResult = await pool.query(
+      `INSERT INTO location (location_name, location, manager_id, contact_number, location_type)
+       VALUES ($1, $2, $3, $4, $5) RETURNING location_id`,
+      [location_name, location, manager_id, contact_number, location_type]
+    );
+
+    const locationId = locationResult.rows[0].location_id;
+
+    // Insert into specific table based on location_type
+    if (location_type === "Store") {
+      await pool.query(
+        `INSERT INTO store (location_id, operating_hours, customer_capacity, parking_spaces)
+         VALUES ($1, $2, $3, $4)`,
+        [locationId, operating_hours, customer_capacity, parking_spaces]
+      );
+    } else if (location_type === "Warehouse") {
+      await pool.query(
+        `INSERT INTO warehouse (location_id, storage_capacity, number_of_docks)
+         VALUES ($1, $2, $3)`,
+        [locationId, storage_capacity, number_of_docks]
+      );
+    }
+
+    res.status(201).json({ message: "Location added successfully" });
+  } catch (error) {
+    console.error("Error adding location:", error);
+    res.status(500).json({ error: "Error adding location" });
+  }
+});
+
+app.get("/person-managers", async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT person_id, name FROM person WHERE role LIKE '%Manager'`);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching managers:", error);
+    res.status(500).json({ error: "Error fetching managers" });
   }
 });
 
@@ -821,28 +828,41 @@ app.post('/attendance', async (req, res) => {
 });
 
 //EXPENSES
-app.get('/expenses', async (req, res) => {
+app.get("/expenses", async (req, res) => {
   try {
-    const query = `
-      SELECT 
-        e.expense_id,
-        e.amount,
-        d.department_name,
-        p.name AS employee_name,
-        e.category,
-        e.date_of_expense,
-        e.description
-      FROM expenses e
-      LEFT JOIN department d ON e.department_id = d.department_id
-      LEFT JOIN person p ON e.person_id = p.person_id
-    `;
-    const result = await pool.query(query);
+    const result = await pool.query("SELECT * FROM expenses");
     res.json(result.rows);
   } catch (error) {
-    console.error('Error fetching expenses:', error);
-    res.status(500).json({ error: 'Failed to fetch expenses' });
+    console.error("Error fetching expenses:", error);
+    res.status(500).json({ error: "Error fetching expenses" });
   }
 });
+
+app.post("/expenses", async (req, res) => {
+  try {
+    const {
+      amount,
+      department_id,
+      budget_id,
+      category,
+      date_of_expense,
+      description,
+      person_id,
+    } = req.body;
+
+    await pool.query(
+      `INSERT INTO expenses (amount, department_id, budget_id, category, date_of_expense, description, person_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [amount, department_id, budget_id, category, date_of_expense, description, person_id]
+    );
+
+    res.status(201).json({ message: "Expense added successfully" });
+  } catch (error) {
+    console.error("Error adding expense:", error);
+    res.status(500).json({ error: "Error adding expense" });
+  }
+});
+
 
 
 

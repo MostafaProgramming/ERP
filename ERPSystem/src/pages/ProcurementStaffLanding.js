@@ -22,10 +22,10 @@ const ProcurementLanding = () => {
         {/* Place Purchase Orders */}
         <div
           className="card"
-          onClick={() => navigate("/procurement-staff/place-purchase-orders")}
+          onClick={() => navigate("/add-location")}
         >
-          <h3>Place Purchase Orders</h3>
-          <p>Order New Engine Parts.</p>
+          <h3>Add New Stores/Warehouses</h3>
+          <p>Add New Stores or Warehouses to Company Records</p>
         </div>
 
         {/* View Suppliers */}

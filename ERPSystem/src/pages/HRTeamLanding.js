@@ -29,7 +29,7 @@ const HRTeamLanding = () => {
         </div>
         <div
           className="card"
-          onClick={() => handleNavigation("/hr-team/add-employees")}
+          onClick={() => handleNavigation("/hr-manager/add-employee")}
         >
           <h3>Add New Employees</h3>
           <p>Add New Employee To The Company</p>
