@@ -867,14 +867,49 @@ app.post("/expenses", async (req, res) => {
 
 
 // BUDGET
-app.get('/budget', async (req, res) => {
+app.get("/budget", async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM budget');
+    const result = await pool.query("SELECT budget_id, category FROM budget");
     res.json(result.rows);
-  } catch (err) {
-    handleDatabaseError(res, err, 'Error fetching budgets');
+  } catch (error) {
+    console.error("Error fetching budgets:", error);
+    res.status(500).json({ error: "Error fetching budgets" });
   }
 });
+
+app.post("/budgets", async (req, res) => {
+  const {
+    department_id,
+    allocated_amount,
+    start_date,
+    end_date,
+    description,
+    category,
+  } = req.body;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO budget (department_id, allocated_amount, start_date, end_date, description, category)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [department_id, allocated_amount, start_date, end_date, description, category]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error adding budget:", error);
+    res.status(500).json({ error: "Error adding budget" });
+  }
+});
+
+app.get("/budgets", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM budget ORDER BY budget_id");
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching budgets:", error);
+    res.status(500).json({ error: "Error fetching budgets" });
+  }
+});
+
 
 // STOCK TRANSFERS
 app.get('/stock-transfer', async (req, res) => {

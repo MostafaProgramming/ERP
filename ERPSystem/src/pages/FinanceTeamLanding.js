@@ -37,7 +37,7 @@ const FinanceLanding = () => {
         {/* Manage Budgets */}
         <div
           className="card"
-          onClick={() => navigate("/finance/manage-budgets")}
+          onClick={() => navigate("/finance-manager/view-budgets")}
         >
           <h3>Manage Budgets</h3>
           <p>Allocate, Monitor, and Adjust Department Budgets.</p>

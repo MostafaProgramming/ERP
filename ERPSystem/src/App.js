@@ -33,6 +33,8 @@ import AddEmployee from "./components/Employee/AddEmployee";
 import AddLocation from "./components/Location/AddLocation";
 import Expenses from "./components/Expenses/Expenses";
 import AddExpense from "./components/Expenses/AddExpenses";
+import AddBudget from "./components/Budget/AddBudget";
+import Budget from "./components/Budget/Budget";
 
 function App() {
   return (
@@ -60,6 +62,8 @@ function App() {
         <Route path="/finance-manager" element={<FinanceTeamLanding />} />
         <Route path="/finance-manager/track-expenses" element={<Expenses />} />
         <Route path="/add-expense" element={<AddExpense />} />
+        <Route path="/finance-manager/view-budgets" element={<Budget />} />
+        <Route path="/finance-manager/add-department-budget" element={<AddBudget />} />
         <Route path="/executive" element={<ExecutiveLanding />} />
         <Route path="/store-manager/managing-employees" element={<ManageEmployee />} />
         <Route path="/store-manager/request-stock-transfers" element={<CreateOrder />} />
