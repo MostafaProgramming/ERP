@@ -14,8 +14,8 @@ import PayrollPage from "./pages/PayrollPage";
 import CreateOrder from "./pages/CreateOrders"; 
 import ViewSuppliers from "./pages/ViewSuppliers";
 import TrackDeliverySchedules from "./pages/TrackDeliverySchedules";
-import { TrackSales } from "./components/TrackSales";
-import { AnalyseSales } from "./components/AnalyseSales";
+import { TrackSales } from "./components/Sales/TrackSales";
+import { AnalyseSales } from "./components/Sales/AnalyseSales";
 import ManagingEmployees, {
 ManageEmployee,
 } from "./components/ManagingEmployees";
@@ -24,6 +24,11 @@ import Inventory from "./pages/Inventory";
 import PurchaseOrder from "./pages/PurchaseOrder";
 import TrackExpenses from "./pages/TrackExpenses";
 import StockTransfer from "./pages/StockTransfer";
+import Products from "./components/Product/Product";
+import Suppliers from "./components/Supplier/Supplier";
+import AddProduct from "./components/Product/AddProduct";
+import AddSupplier from "./components/Supplier/AddSupplier";
+import AddSalesRecord from "./components/Sales/AddSales";
 
 function App() {
   return (
@@ -62,8 +67,14 @@ function App() {
         <Route path="/procurement-manager/track-inventory" element={<Inventory />} />
         <Route path="/procurement-staff/view-suppliers" element={<ViewSuppliers />} />
         <Route path="/procurement-manager/track-purchase-orders" element={<PurchaseOrder />} />
+        <Route path="/procurement-manager/manage-products" element={<Products />} />
+        <Route path="/procurement-manager/manage-products/add-product" element={<AddProduct />} />
+        <Route path="/procurement-manager/manage-suppliers" element={<Suppliers />} />
+        <Route path="/procurement-manager/manage-suppliers/add-supplier" element={<AddSupplier />} />
         <Route path="/sales-staff/track-sales" element={<TrackSales />} />
         <Route path="/sales-staff/analyse-sales" element={<AnalyseSales />} />
+        <Route path="/add-sales-record" element={<AddSalesRecord />} />
+
       </Routes>
     </Router>
   );

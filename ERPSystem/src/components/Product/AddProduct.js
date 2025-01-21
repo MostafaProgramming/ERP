@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { FaHome } from "react-icons/fa";
-import "../styles/CreatePurchaseOrder.css"; // Reuse CreateOrder CSS
+import "../../styles/CreatePurchaseOrder.css"; // Reuse CreateOrder CSS
 
 export const AddProduct = () => {
   const [formData, setFormData] = useState({

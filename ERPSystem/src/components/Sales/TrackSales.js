@@ -11,7 +11,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
-import "../styles/TrackSales.css";
+import { useNavigate } from "react-router-dom"; // For navigation
+import "../../styles/TrackSales.css";
 
 // Register Chart.js components
 Chart.register(
@@ -25,39 +26,48 @@ Chart.register(
 );
 
 export const TrackSales = ({ departmentId }) => {
-  // State to store sales data
-  const [salesData, setSalesData] = useState([]);
-  // State to manage loading indicator
-  const [loading, setLoading] = useState(true);
-  // State to store available locations for filtering
-  const [locations, setLocations] = useState([]);
-  // State to track selected location for filtering
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [salesData, setSalesData] = useState([]); // Sales data state
+  const [loading, setLoading] = useState(true); // Loading state
+  const [search, setSearch] = useState(""); // Search input state
+  const [filteredSales, setFilteredSales] = useState([]); // Filtered sales data
+  const navigate = useNavigate(); // Navigation hook
 
-  // Fetch initial data when component mounts
+  const storedDepartmentId = localStorage.getItem("department_id");
+  const storedLocationId = localStorage.getItem("location_id");
+  const storedPersonId = localStorage.getItem("person_id");
+
   useEffect(() => {
     fetchSalesData();
-    fetchLocations();
   }, []);
 
-  // Function to fetch sales data from backend API
-  const fetchSalesData = async (locationId = null) => {
+  useEffect(() => {
+    // Filter sales data dynamically based on search input
+    const filtered = salesData.filter(
+      (sale) =>
+        sale.product_id.toString().includes(search) ||
+        sale.store_id.toString().includes(search) ||
+        new Date(sale.date_of_sale)
+          .toLocaleDateString()
+          .toLowerCase()
+          .includes(search.toLowerCase())
+    );
+    setFilteredSales(filtered);
+  }, [search, salesData]);
+
+  const fetchSalesData = async () => {
     try {
-      const departmentId = localStorage.getItem("department_id");
-      const locationId = localStorage.getItem("location_id");
       let response;
-  
-      if (departmentId === "1") {
+      if (storedDepartmentId === "1") {
         // Sales Manager: Fetch all Sales
         response = await axios.get("http://localhost:5000/sales-record");
-      } else if (departmentId !== "1") {
-        // Store/Warehouse Manager: Fetch employees by location_id
+      } else {
+        // Store/Warehouse Manager: Fetch sales by location_id
         response = await axios.get("http://localhost:5000/sales-by-store", {
-          params: { location_id: locationId },
+          params: { location_id: storedLocationId },
         });
-      } 
-      setLoading(true);
+      }
       setSalesData(response.data);
+      setFilteredSales(response.data); // Initialize filtered data with all sales
       setLoading(false);
     } catch (error) {
       console.error("Error fetching sales data:", error);
@@ -65,32 +75,14 @@ export const TrackSales = ({ departmentId }) => {
     }
   };
 
-  // Function to fetch locations for the filter
-  const fetchLocations = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/locations");
-      setLocations(response.data);
-    } catch (error) {
-      console.error("Error fetching locations:", error);
-    }
-  };
-
-  // Handle change in location filter
-  const handleLocationChange = (e) => {
-    const locationId = e.target.value;
-    setSelectedLocation(locationId);
-    fetchSalesData(locationId);
-  };
-
-  // Chart data configuration for rendering the line chart
   const chartData = {
-    labels: salesData.map((sale) =>
+    labels: filteredSales.map((sale) =>
       new Date(sale.date_of_sale).toLocaleDateString()
     ),
     datasets: [
       {
         label: "Total Amount Sold",
-        data: salesData.map((sale) => sale.total_amount),
+        data: filteredSales.map((sale) => sale.total_amount),
         borderColor: "#007bff",
         backgroundColor: "rgba(0, 123, 255, 0.5)",
         fill: true,
@@ -98,7 +90,6 @@ export const TrackSales = ({ departmentId }) => {
     ],
   };
 
-  // Chart options to ensure responsiveness
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -125,23 +116,14 @@ export const TrackSales = ({ departmentId }) => {
   return (
     <div className="sales-module">
       <h2>Track Sales Data</h2>
-      {departmentId !== 1 && (
-        <div className="filter-container">
-          <label htmlFor="location-filter">Filter by Location:</label>
-          <select
-            id="location-filter"
-            value={selectedLocation}
-            onChange={handleLocationChange}
-          >
-            <option value="">All Locations</option>
-            {locations.map((location) => (
-              <option key={location.location_id} value={location.location_id}>
-                {location.location_name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      <div className="inventory-search">
+        <input
+          type="text"
+          placeholder="Search by Product ID, Store ID, or Date"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
       {loading ? (
         <p>Loading sales data...</p>
       ) : (
@@ -162,7 +144,7 @@ export const TrackSales = ({ departmentId }) => {
                 </tr>
               </thead>
               <tbody>
-                {salesData.map((sale) => (
+                {filteredSales.map((sale) => (
                   <tr key={sale.sales_id}>
                     <td>{sale.sales_id}</td>
                     <td>{sale.date_of_sale}</td>
@@ -174,6 +156,23 @@ export const TrackSales = ({ departmentId }) => {
                 ))}
               </tbody>
             </table>
+            {storedDepartmentId === "5" && (
+              <div className="add-sales-button-container">
+                <button
+                  className="add-sales-button"
+                  onClick={() =>
+                    navigate("/add-sales-record", {
+                      state: {
+                        store_id: storedLocationId,
+                        manager_id: storedPersonId,
+                      },
+                    })
+                  }
+                >
+                  Add New Sales Record
+                </button>
+              </div>
+            )}
           </div>
         </>
       )}

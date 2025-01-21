@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import axios from "axios";
 import { FaHome } from "react-icons/fa";
-import "../styles/Inventory.css"; // Reuse Inventory CSS
+import "../../styles/Inventory.css"; // Reuse Inventory CSS
 
 export const Products = () => {
   const [products, setProducts] = useState([]);

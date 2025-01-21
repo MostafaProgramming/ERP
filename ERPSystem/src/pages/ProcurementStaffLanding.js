@@ -31,7 +31,7 @@ const ProcurementLanding = () => {
         {/* View Suppliers */}
         <div
           className="card"
-          onClick={() => navigate("/procurement-staff/view-suppliers")}
+          onClick={() => navigate("/procurement-manager/manage-suppliers")}
         >
           <h3>Manage Suppliers</h3>
           <p>Manage and Edit Supplier Information.</p>

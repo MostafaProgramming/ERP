@@ -317,14 +317,86 @@ app.get('/warehouse', async (req, res) => {
 });
 
 // SUPPLIERS
-app.get('/supplier', async (req, res) => {
+// Get all suppliers
+app.get("/suppliers", async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM supplier');
+    const result = await pool.query("SELECT * FROM supplier");
     res.json(result.rows);
   } catch (err) {
-    handleDatabaseError(res, err, 'Error fetching suppliers');
+    console.error("Error fetching suppliers:", err);
+    res.status(500).json({ error: "Error fetching suppliers" });
   }
 });
+
+// Get a single supplier by ID
+app.get("/suppliers/:supplierId", async (req, res) => {
+  const { supplierId } = req.params;
+  try {
+    const result = await pool.query("SELECT * FROM supplier WHERE supplier_id = $1", [supplierId]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Supplier not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching supplier:", err);
+    res.status(500).json({ error: "Error fetching supplier" });
+  }
+});
+
+// Add a new supplier
+app.post("/suppliers", async (req, res) => {
+  const { supplier_name, contact_details, location, contract_terms } = req.body;
+  console.log("Request body:", req.body); // Log request body
+
+  try {
+    await pool.query(
+      `INSERT INTO supplier (supplier_name, contact_details, location, contract_terms) 
+       VALUES ($1, $2, $3, $4)`,
+      [supplier_name, contact_details, location, contract_terms]
+    );
+    res.status(201).json({ message: "Supplier added successfully" });
+  } catch (err) {
+    console.error("Error adding supplier:", err);
+    res.status(500).json({ error: "Error adding supplier" });
+  }
+});
+
+
+
+// Update a supplier
+app.put("/suppliers/:supplierId", async (req, res) => {
+  const { supplierId } = req.params;
+  const { supplier_name, contact_details, location, contract_terms } = req.body;
+  try {
+    const result = await pool.query(
+      "UPDATE supplier SET supplier_name = $1, contact_details = $2, location = $3, contract_terms = $4 WHERE supplier_id = $5",
+      [supplier_name, contact_details, location, contract_terms, supplierId]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Supplier not found" });
+    }
+    res.json({ message: "Supplier updated successfully." });
+  } catch (err) {
+    console.error("Error updating supplier:", err);
+    res.status(500).json({ error: "Error updating supplier" });
+  }
+});
+
+// Delete a supplier
+app.delete("/suppliers/:supplierId", async (req, res) => {
+  const { supplierId } = req.params;
+  try {
+    const result = await pool.query("DELETE FROM supplier WHERE supplier_id = $1", [supplierId]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Supplier not found" });
+    }
+    res.json({ message: "Supplier deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting supplier:", err);
+    res.status(500).json({ error: "Error deleting supplier" });
+  }
+});
+
 
 app.get('/suppliers-by-product/:productId', async (req, res) => {
   const { productId } = req.params;
@@ -344,18 +416,40 @@ app.get('/suppliers-by-product/:productId', async (req, res) => {
 
 
 // PRODUCTS
-app.get('/products', async (req, res) => {
+app.get("/products", async (req, res) => {
   try {
-    const products = await pool.query(`
-      SELECT product_id, product_name
-      FROM product
-    `);
-    res.json(products.rows);
-  } catch (error) {
-    console.error("Error fetching products:", error.message);
-    res.status(500).send("Server error");
+    const result = await pool.query("SELECT * FROM product");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    res.status(500).json({ error: "Error fetching products" });
   }
 });
+app.post("/products", async (req, res) => {
+  const {
+    product_name,
+    category,
+    price,
+    stock_level,
+    reorder_level,
+    last_purchase_date,
+    supplier_id,
+    cost,
+  } = req.body;
+
+  try {
+    await pool.query(
+      `INSERT INTO product (product_name, category, price, stock_level, reorder_level, last_purchase_date, supplier_id, cost) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [product_name, category, price, stock_level, reorder_level, last_purchase_date, supplier_id, cost]
+    );
+    res.status(201).json({ message: "Product added successfully" });
+  } catch (err) {
+    console.error("Error adding product:", err);
+    res.status(500).json({ error: "Error adding product" });
+  }
+});
+
 
 
 // INVENTORY
@@ -402,6 +496,22 @@ app.get('/sales-record', async (req, res) => {
     handleDatabaseError(res, err, 'Error fetching sales records');
   }
 });
+
+app.post("/sales-records", async (req, res) => {
+  const { store_id, manager_id, product_id, quantity_sold, date_of_sale, total_amount, payment_method } = req.body;
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO sales_record (store_id, manager_id, product_id, quantity_sold, date_of_sale, total_amount, payment_method) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING sales_id",
+      [store_id, manager_id, product_id, quantity_sold, date_of_sale, total_amount, payment_method]
+    );
+    res.json({ message: "Sales record added successfully.", sales_id: result.rows[0].sales_id });
+  } catch (err) {
+    console.error("Error adding sales record:", err);
+    res.status(500).json({ error: "Error adding sales record." });
+  }
+});
+
 
 // PERSON
 app.get('/sales-by-store', async (req, res) => {
@@ -586,7 +696,7 @@ app.post("/orders", async (req, res) => {
 
     // Fetch product cost from the product table
     const productResult = await pool.query(
-      "SELECT cost FROM products WHERE product_id = $1",
+      "SELECT cost FROM product WHERE product_id = $1",
       [product_id]
     );
 
