@@ -29,13 +29,13 @@ import Suppliers from "./components/Supplier/Supplier";
 import AddProduct from "./components/Product/AddProduct";
 import AddSupplier from "./components/Supplier/AddSupplier";
 import AddSalesRecord from "./components/Sales/AddSales";
-import AddEmployee from "./components/Employee/AddEmployee";
 import AddLocation from "./components/Location/AddLocation";
 import Expenses from "./components/Expenses/Expenses";
 import AddExpense from "./components/Expenses/AddExpenses";
 import AddBudget from "./components/Budget/AddBudget";
 import Budget from "./components/Budget/Budget";
 import FinancialReports from "./components/Report/Report";
+import AddPerson from "./components/Employee/AddPerson";
 
 function App() {
   return (
@@ -59,7 +59,7 @@ function App() {
         <Route path="/warehouse-manager/place-purchase-orders" element={<CreateOrder />} />
         <Route path="/sales-manager" element={<SalesStaffLanding />} />
         <Route path="/hr-manager" element={<HRTeamLanding />} />
-        <Route path="/hr-manager/add-employee" element={<AddEmployee />} />
+        <Route path="/hr-manager/add-employee" element={<AddPerson />} />
         <Route path="/finance-manager" element={<FinanceTeamLanding />} />
         <Route path="/finance-manager/track-expenses" element={<Expenses />} />
         <Route path="/add-expense" element={<AddExpense />} />

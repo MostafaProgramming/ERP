@@ -8,18 +8,22 @@ export const ManageEmployee = () => {
   const [filter, setFilter] = useState({ site: "", role: "" });
   const [searchId, setSearchId] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [showUpdateForm, setShowUpdateForm] = useState(false); // Toggle update form
+  const [departments, setDepartments] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   useEffect(() => {
     fetchEmployees();
+    fetchDepartments();
+    fetchLocations();
   }, []);
 
   const fetchEmployees = async () => {
     try {
       const departmentId = localStorage.getItem("department_id");
       const locationId = localStorage.getItem("location_id");
-  
+
       let response;
-  
       if (departmentId === "2") {
         // HR Manager: Fetch all employees
         response = await axios.get("http://localhost:5000/person");
@@ -34,18 +38,34 @@ export const ManageEmployee = () => {
           params: { department_id: departmentId },
         });
       }
-  
-      console.log("Filtered Person data fetched:", response.data);
+
+      console.log("Filtered Employee data fetched:", response.data);
       setEmployees(response.data);
     } catch (error) {
-      console.error("Error fetching person data:", error);
+      console.error("Error fetching employee data:", error);
     } finally {
       setLoading(false);
     }
   };
-  
 
-  // Function to delete a person
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/department");
+      setDepartments(response.data);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  const fetchLocations = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/location");
+      setLocations(response.data);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+    }
+  };
+
   const handleDeleteEmployee = async (personId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this person?"
@@ -55,17 +75,36 @@ export const ManageEmployee = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/person/${personId}`);
-      alert("Person deleted successfully");
-      // Refetch the list after deletion
-      fetchEmployees();
+      await axios.delete(`http://localhost:5000/delete-person/${personId}`);
+      alert("Person deleted successfully.");
+      fetchEmployees(); // Refresh list after deletion
     } catch (error) {
       console.error("Error deleting person:", error);
-      alert("An error occurred while trying to delete the person.");
+      alert("Failed to delete person.");
     }
   };
 
-  // Function to filter employees based on site and role
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedEmployee((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(
+        `http://localhost:5000/update-person/${selectedEmployee.person_id}`,
+        selectedEmployee
+      );
+      alert("Employee updated successfully!");
+      setShowUpdateForm(false);
+      fetchEmployees(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      alert("Failed to update employee.");
+    }
+  };
+
   const filteredEmployees = employees.filter((employee) => {
     const matchesSite = filter.site
       ? employee.location?.toLowerCase().includes(filter.site.toLowerCase())
@@ -83,7 +122,7 @@ export const ManageEmployee = () => {
     <div className="hr-module">
       <h2>Manage Employee Data</h2>
       {loading ? (
-        <p>Loading person data...</p>
+        <p>Loading employee data...</p>
       ) : (
         <>
           <div className="filters">
@@ -106,6 +145,7 @@ export const ManageEmployee = () => {
               onChange={(e) => setFilter({ ...filter, role: e.target.value })}
             />
           </div>
+
           <div className="employee-list">
             <table>
               <thead>
@@ -114,7 +154,7 @@ export const ManageEmployee = () => {
                   <th>Name</th>
                   <th>Role</th>
                   <th>Location</th>
-                  <th>Action</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,27 +166,18 @@ export const ManageEmployee = () => {
                     <td>{employee.location || "N/A"}</td>
                     <td>
                       <div className="action-buttons">
-                        <button onClick={() => setSelectedEmployee(employee)}>
-                          View Details
+                        <button
+                          onClick={() => {
+                            setSelectedEmployee(employee);
+                            setShowUpdateForm(true);
+                          }}
+                        >
+                          Update
                         </button>
                         <button
                           onClick={() => handleDeleteEmployee(employee.person_id)}
                         >
                           Remove
-                        </button>
-                        <button
-                          onClick={() =>
-                            window.location.href = `/schedule/${employee.person_id}`
-                          }
-                        >
-                          Manage Schedule
-                        </button>
-                        <button
-                          onClick={() =>
-                            window.location.href = `/payroll/${employee.person_id}`
-                          }
-                        >
-                          Payroll
                         </button>
                       </div>
                     </td>
@@ -155,34 +186,125 @@ export const ManageEmployee = () => {
               </tbody>
             </table>
           </div>
-          {selectedEmployee && (
-            <div className="employee-details">
-              <h3>Person Details</h3>
-              <p>
-                <strong>ID:</strong> {selectedEmployee.person_id}
-              </p>
-              <p>
-                <strong>Name:</strong> {selectedEmployee.name}
-              </p>
-              <p>
-                <strong>Date of Birth:</strong> {selectedEmployee.dob || "N/A"}
-              </p>
-              <p>
-                <strong>Address:</strong> {selectedEmployee.address || "N/A"}
-              </p>
-              <p>
-                <strong>Role:</strong> {selectedEmployee.role}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedEmployee.location || "N/A"}
-              </p>
-              <p>
-                <strong>Hire Date:</strong> {selectedEmployee.hire_date}
-              </p>
-              <p>
-                <strong>Salary:</strong> ${selectedEmployee.salary}
-              </p>
-              <button onClick={() => setSelectedEmployee(null)}>Close</button>
+
+          {showUpdateForm && selectedEmployee && (
+            <div className="update-form-container">
+              <h3>Update Employee Details</h3>
+              <form onSubmit={handleUpdateSubmit}>
+                <div className="form-group">
+                  <label>Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={selectedEmployee.name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={selectedEmployee.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Role</label>
+                  <select
+                    name="role"
+                    value={selectedEmployee.role}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="Employee">Employee</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Executive">Executive</option>
+                  </select>
+                </div>
+
+                {selectedEmployee.role === "Employee" && (
+                  <>
+                    <div className="form-group">
+                      <label>Performance Rating</label>
+                      <input
+                        type="number"
+                        name="performance_rating"
+                        value={selectedEmployee.performance_rating || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Absences</label>
+                      <input
+                        type="number"
+                        name="absences"
+                        value={selectedEmployee.absences || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {selectedEmployee.role === "Manager" && (
+                  <>
+                    <div className="form-group">
+                      <label>Team Size</label>
+                      <input
+                        type="number"
+                        name="team_size"
+                        value={selectedEmployee.team_size || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Approval Limit</label>
+                      <input
+                        type="number"
+                        name="approval_limit"
+                        value={selectedEmployee.approval_limit || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {selectedEmployee.role === "Executive" && (
+                  <>
+                    <div className="form-group">
+                      <label>Region</label>
+                      <input
+                        type="text"
+                        name="region"
+                        value={selectedEmployee.region || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Strategic Focus Area</label>
+                      <input
+                        type="text"
+                        name="strategy_focus_area"
+                        value={selectedEmployee.strategy_focus_area || ""}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </>
+                )}
+
+                <button type="submit" className="save-button">
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  className="cancel-button"
+                  onClick={() => setShowUpdateForm(false)}
+                >
+                  Cancel
+                </button>
+              </form>
             </div>
           )}
         </>
